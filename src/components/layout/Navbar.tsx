@@ -1,13 +1,26 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from '@/contexts/ThemeContext';
-import { Moon, Sun, Globe, Menu, X, Maximize, Minimize } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
+import { Moon, Sun, Globe, Menu, X, Maximize, Minimize, User, Shield, LogOut } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import logo from '@/assets/logo.png';
 
 const Navbar: React.FC = () => {
   const { t, language, setLanguage, isRTL } = useLanguage();
   const { theme, toggleTheme } = useTheme();
+  const { user, isAdmin, signOut, loading } = useAuth();
+  const navigate = useNavigate();
+  
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -34,6 +47,11 @@ const Navbar: React.FC = () => {
     } else {
       document.exitFullscreen();
     }
+  };
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate('/');
   };
 
   const navLinks = [
@@ -120,10 +138,48 @@ const Navbar: React.FC = () => {
               <Moon className={`absolute h-5 w-5 transition-all duration-500 ${theme === 'dark' ? 'rotate-0 scale-100' : '-rotate-90 scale-0'}`} />
             </Button>
 
-            {/* Login Button */}
-            <Button variant="gradient" className="hidden md:flex">
-              {t('nav.login')}
-            </Button>
+            {/* User Menu or Login Button */}
+            {!loading && (
+              user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="relative">
+                      <Avatar className="h-8 w-8">
+                        <AvatarFallback className="bg-primary text-primary-foreground text-sm">
+                          {user.user_metadata?.full_name?.charAt(0)?.toUpperCase() || user.email?.charAt(0)?.toUpperCase() || 'U'}
+                        </AvatarFallback>
+                      </Avatar>
+                      {isAdmin && (
+                        <span className="absolute -bottom-1 -right-1 bg-accent rounded-full p-0.5">
+                          <Shield className="h-3 w-3 text-accent-foreground" />
+                        </span>
+                      )}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align={isRTL ? 'start' : 'end'} className="w-48">
+                    <DropdownMenuItem onClick={() => navigate('/profile')} className="gap-2 cursor-pointer">
+                      <User className="h-4 w-4" />
+                      {isRTL ? 'الملف الشخصي' : 'Profile'}
+                    </DropdownMenuItem>
+                    {isAdmin && (
+                      <DropdownMenuItem onClick={() => navigate('/admin')} className="gap-2 cursor-pointer">
+                        <Shield className="h-4 w-4" />
+                        {isRTL ? 'لوحة التحكم' : 'Admin Panel'}
+                      </DropdownMenuItem>
+                    )}
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={handleSignOut} className="gap-2 cursor-pointer text-destructive focus:text-destructive">
+                      <LogOut className="h-4 w-4" />
+                      {isRTL ? 'تسجيل الخروج' : 'Sign Out'}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button variant="gradient" className="hidden md:flex" onClick={() => navigate('/auth')}>
+                  {t('nav.login')}
+                </Button>
+              )
+            )}
 
             {/* Mobile Menu Toggle */}
             <Button
@@ -151,9 +207,28 @@ const Navbar: React.FC = () => {
                   {t(link.key)}
                 </a>
               ))}
-              <Button variant="gradient" className="mt-4">
-                {t('nav.login')}
-              </Button>
+              {user ? (
+                <>
+                  <Button variant="outline" className="mt-2" onClick={() => { navigate('/profile'); setIsMobileMenuOpen(false); }}>
+                    <User className="h-4 w-4 me-2" />
+                    {isRTL ? 'الملف الشخصي' : 'Profile'}
+                  </Button>
+                  {isAdmin && (
+                    <Button variant="outline" onClick={() => { navigate('/admin'); setIsMobileMenuOpen(false); }}>
+                      <Shield className="h-4 w-4 me-2" />
+                      {isRTL ? 'لوحة التحكم' : 'Admin Panel'}
+                    </Button>
+                  )}
+                  <Button variant="destructive" onClick={() => { handleSignOut(); setIsMobileMenuOpen(false); }}>
+                    <LogOut className="h-4 w-4 me-2" />
+                    {isRTL ? 'تسجيل الخروج' : 'Sign Out'}
+                  </Button>
+                </>
+              ) : (
+                <Button variant="gradient" className="mt-4" onClick={() => { navigate('/auth'); setIsMobileMenuOpen(false); }}>
+                  {t('nav.login')}
+                </Button>
+              )}
             </div>
           </div>
         )}
