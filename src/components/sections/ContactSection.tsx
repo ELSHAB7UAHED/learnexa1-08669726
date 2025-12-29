@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, memo } from 'react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Mail, Phone, ExternalLink, Send, MapPin, Sparkles, CheckCircle } from 'lucide-react';
+import { Mail, Phone, ExternalLink, Send, MapPin, CheckCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
-const ContactSection: React.FC = () => {
+const ContactSection: React.FC = memo(() => {
   const { t, isRTL } = useLanguage();
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -15,8 +15,7 @@ const ContactSection: React.FC = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise(resolve => setTimeout(resolve, 1200));
 
     toast({
       title: isRTL ? 'تم إرسال رسالتك!' : 'Message sent!',
@@ -34,7 +33,6 @@ const ContactSection: React.FC = () => {
       value: '0ahmednour1@gmail.com',
       href: 'mailto:0ahmednour1@gmail.com',
       gradient: 'from-primary to-secondary',
-      delay: '0s',
     },
     {
       icon: Phone,
@@ -42,7 +40,6 @@ const ContactSection: React.FC = () => {
       value: '+20 101 481 2328',
       href: 'tel:+201014812328',
       gradient: 'from-secondary to-tertiary',
-      delay: '0.1s',
     },
     {
       icon: ExternalLink,
@@ -50,102 +47,91 @@ const ContactSection: React.FC = () => {
       value: 'ahmednour.vercel.app',
       href: 'https://ahmednour.vercel.app',
       gradient: 'from-accent to-primary',
-      delay: '0.2s',
     },
   ];
 
   return (
-    <section id="contact" className="py-32 relative overflow-hidden">
-      {/* Enhanced Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/40 to-muted/60" />
-      <div className="absolute inset-0 gradient-mesh opacity-20" />
-      <div className="absolute inset-0 bg-grid-pattern bg-grid-size opacity-15" />
+    <section id="contact" className="py-16 md:py-24 relative overflow-hidden">
+      {/* Background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent via-muted/30 to-muted/50" />
       
-      {/* Animated Blobs */}
-      <div className="absolute bottom-0 left-1/4 w-[500px] h-[500px] bg-gradient-to-br from-primary/20 to-secondary/10 rounded-full blur-3xl animate-blob" />
-      <div className="absolute top-0 right-1/4 w-[500px] h-[500px] bg-gradient-to-br from-secondary/20 to-tertiary/10 rounded-full blur-3xl animate-blob-reverse animation-delay-2000" />
-      <div className="absolute top-1/2 left-0 w-64 h-64 bg-accent/15 rounded-full blur-3xl animate-blob animation-delay-4000" />
+      {/* Blobs */}
+      <div className="absolute bottom-0 left-1/4 w-64 h-64 bg-primary/10 rounded-full blur-3xl" />
+      <div className="absolute top-0 right-1/4 w-64 h-64 bg-secondary/10 rounded-full blur-3xl" />
 
       <div className="container mx-auto px-4 relative z-10">
         {/* Header */}
-        <div className={`text-center max-w-3xl mx-auto mb-20 ${isRTL ? 'text-right' : 'text-left'} md:text-center`}>
-          <div className="inline-flex items-center gap-3 glass-morphism px-5 py-3 rounded-full mb-8 animate-scale-in-bounce group">
-            <div className="w-2 h-2 rounded-full gradient-primary animate-pulse" />
-            <span className="text-sm font-semibold text-muted-foreground">
+        <div className="text-center max-w-3xl mx-auto mb-12 md:mb-16">
+          <div className="inline-flex items-center gap-2 glass-morphism px-4 py-2 rounded-full mb-6 animate-scale-in touch-scale">
+            <div className="w-2 h-2 rounded-full gradient-primary" />
+            <span className="text-xs md:text-sm font-semibold text-muted-foreground">
               {t('contact.badge')}
             </span>
-            <Sparkles className="h-4 w-4 text-primary animate-glow-pulse" />
           </div>
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-black mb-8 animate-slide-up-bounce">
-            <span className="gradient-text-animated">{t('contact.title')}</span>
+          <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-extrabold mb-4 md:mb-6 animate-slide-up">
+            <span className="gradient-text">{t('contact.title')}</span>
           </h2>
-          <p className="text-xl text-muted-foreground animate-slide-up animation-delay-200 leading-relaxed">
+          <p className="text-base md:text-lg text-muted-foreground animate-slide-up animation-delay-200">
             {t('contact.description')}
           </p>
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-16 max-w-7xl mx-auto">
-          {/* Enhanced Contact Form */}
-          <div className="glass-morphism rounded-4xl p-10 md:p-12 animate-slide-in-left relative overflow-hidden group hover:shadow-glow-xl transition-all duration-700">
-            {/* Background Effect */}
-            <div className="absolute inset-0 gradient-primary opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
-            
-            {/* Shimmer Effect */}
-            <div className="absolute inset-0 shimmer opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-            
-            <form onSubmit={handleSubmit} className="space-y-8 relative z-10">
-              <div className="grid md:grid-cols-2 gap-6">
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-foreground">{t('contact.name')}</label>
+        <div className="grid lg:grid-cols-2 gap-8 md:gap-12 max-w-6xl mx-auto">
+          {/* Contact Form */}
+          <div className="glass-morphism rounded-2xl md:rounded-3xl p-6 md:p-8 animate-slide-up relative overflow-hidden">
+            <form onSubmit={handleSubmit} className="space-y-5 md:space-y-6 relative z-10">
+              <div className="grid sm:grid-cols-2 gap-4 md:gap-5">
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold">{t('contact.name')}</label>
                   <Input
                     type="text"
                     required
-                    className="bg-background/60 border-border/50 focus:border-primary focus:ring-2 focus:ring-primary/20 h-14 rounded-xl text-lg transition-all duration-300 hover:border-primary/50"
-                    placeholder={isRTL ? 'أدخل اسمك' : 'Enter your name'}
+                    className="bg-background/50 border-border/50 focus:border-primary h-12 rounded-xl text-base touch-scale"
+                    placeholder={isRTL ? 'اسمك' : 'Your name'}
                   />
                 </div>
-                <div className="space-y-3">
-                  <label className="block text-sm font-semibold text-foreground">{t('contact.email')}</label>
+                <div className="space-y-2">
+                  <label className="block text-sm font-semibold">{t('contact.email')}</label>
                   <Input
                     type="email"
                     required
-                    className="bg-background/60 border-border/50 focus:border-primary focus:ring-2 focus:ring-primary/20 h-14 rounded-xl text-lg transition-all duration-300 hover:border-primary/50"
-                    placeholder={isRTL ? 'أدخل بريدك الإلكتروني' : 'Enter your email'}
+                    className="bg-background/50 border-border/50 focus:border-primary h-12 rounded-xl text-base touch-scale"
+                    placeholder={isRTL ? 'بريدك الإلكتروني' : 'Your email'}
                   />
                 </div>
               </div>
-              <div className="space-y-3">
-                <label className="block text-sm font-semibold text-foreground">{t('contact.phone')}</label>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold">{t('contact.phone')}</label>
                 <Input
                   type="tel"
-                  className="bg-background/60 border-border/50 focus:border-primary focus:ring-2 focus:ring-primary/20 h-14 rounded-xl text-lg transition-all duration-300 hover:border-primary/50"
-                  placeholder={isRTL ? 'أدخل رقم هاتفك' : 'Enter your phone'}
+                  className="bg-background/50 border-border/50 focus:border-primary h-12 rounded-xl text-base touch-scale"
+                  placeholder={isRTL ? 'رقم هاتفك' : 'Your phone'}
                 />
               </div>
-              <div className="space-y-3">
-                <label className="block text-sm font-semibold text-foreground">{t('contact.message')}</label>
+              <div className="space-y-2">
+                <label className="block text-sm font-semibold">{t('contact.message')}</label>
                 <Textarea
                   required
-                  rows={6}
-                  className="bg-background/60 border-border/50 focus:border-primary focus:ring-2 focus:ring-primary/20 rounded-xl resize-none text-lg transition-all duration-300 hover:border-primary/50"
-                  placeholder={isRTL ? 'اكتب رسالتك هنا...' : 'Write your message here...'}
+                  rows={5}
+                  className="bg-background/50 border-border/50 focus:border-primary rounded-xl resize-none text-base touch-scale"
+                  placeholder={isRTL ? 'رسالتك...' : 'Your message...'}
                 />
               </div>
               <Button
                 type="submit"
                 variant="hero"
-                size="xl"
-                className="w-full group glow-primary hover:glow-intense transition-all duration-500"
+                size="lg"
+                className="w-full h-12 md:h-14 text-base md:text-lg glow-primary touch-scale"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
-                  <span className="flex items-center gap-3">
-                    <span className="w-6 h-6 border-3 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
+                  <span className="flex items-center gap-2">
+                    <span className="w-5 h-5 border-2 border-primary-foreground/30 border-t-primary-foreground rounded-full animate-spin" />
                     {isRTL ? 'جاري الإرسال...' : 'Sending...'}
                   </span>
                 ) : (
-                  <span className="flex items-center gap-3">
-                    <Send className="h-6 w-6 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform duration-300" />
+                  <span className="flex items-center gap-2">
+                    <Send className="h-5 w-5" />
                     {t('contact.send')}
                   </span>
                 )}
@@ -153,65 +139,55 @@ const ContactSection: React.FC = () => {
             </form>
           </div>
 
-          {/* Enhanced Contact Info */}
-          <div className="space-y-8 animate-slide-in-right">
+          {/* Contact Info */}
+          <div className="space-y-4 md:space-y-5 animate-slide-up animation-delay-200">
             {contactInfo.map((info, index) => (
               <a
                 key={index}
                 href={info.href}
                 target={info.href.startsWith('http') ? '_blank' : undefined}
                 rel={info.href.startsWith('http') ? 'noopener noreferrer' : undefined}
-                className="group glass-morphism rounded-3xl p-8 flex items-center gap-6 hover:shadow-glow-xl transition-all duration-500 hover:-translate-y-2 hover:scale-[1.02] animate-scale-in"
-                style={{ animationDelay: info.delay }}
+                className="group glass-morphism rounded-2xl p-5 md:p-6 flex items-center gap-4 hover:shadow-glow transition-all duration-300 hover:-translate-y-1 touch-scale"
               >
                 {/* Icon */}
-                <div className="relative">
-                  <div className={`w-18 h-18 rounded-2xl bg-gradient-to-br ${info.gradient} flex items-center justify-center shadow-glow-lg group-hover:shadow-glow-xl group-hover:scale-110 group-hover:rotate-6 transition-all duration-500`}>
-                    <info.icon className="h-8 w-8 text-primary-foreground" />
-                  </div>
-                  <div className={`absolute -inset-2 rounded-2xl bg-gradient-to-br ${info.gradient} blur-xl opacity-30 group-hover:opacity-60 transition-opacity duration-500`} />
+                <div className={`w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br ${info.gradient} flex items-center justify-center shadow-glow group-hover:scale-105 transition-transform`}>
+                  <info.icon className="h-5 w-5 md:h-6 md:w-6 text-primary-foreground" />
                 </div>
                 
                 {/* Content */}
-                <div className="flex-1">
-                  <div className="text-sm text-muted-foreground mb-2 font-medium">{info.label}</div>
-                  <div className="text-xl font-bold group-hover:gradient-text transition-all duration-300">
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs md:text-sm text-muted-foreground mb-1">{info.label}</div>
+                  <div className="text-base md:text-lg font-bold truncate group-hover:text-primary transition-colors">
                     {info.value}
                   </div>
                 </div>
 
-                {/* Arrow Indicator */}
-                <div className="w-10 h-10 rounded-full bg-muted/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-300 group-hover:bg-primary group-hover:shadow-glow">
-                  <CheckCircle className="h-5 w-5 text-primary-foreground" />
+                {/* Arrow */}
+                <div className="w-8 h-8 rounded-full bg-muted/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all group-hover:bg-primary flex-shrink-0">
+                  <CheckCircle className="h-4 w-4 text-primary-foreground" />
                 </div>
               </a>
             ))}
 
-            {/* Enhanced Location Card */}
-            <div className="glass-morphism rounded-3xl p-8 animate-scale-in animation-delay-300 relative overflow-hidden group hover:shadow-glow-xl transition-all duration-500">
-              {/* Background Effect */}
-              <div className="absolute inset-0 gradient-accent opacity-0 group-hover:opacity-5 transition-opacity duration-500" />
-              
-              <div className={`flex items-center gap-6 mb-6 ${isRTL ? 'flex-row-reverse' : ''}`}>
-                <div className="relative">
-                  <div className="w-18 h-18 rounded-2xl bg-gradient-to-br from-tertiary to-accent flex items-center justify-center shadow-glow-lg group-hover:shadow-glow-xl group-hover:scale-110 transition-all duration-500">
-                    <MapPin className="h-8 w-8 text-tertiary-foreground" />
-                  </div>
-                  <div className="absolute -inset-2 rounded-2xl bg-gradient-to-br from-tertiary to-accent blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-500" />
+            {/* Location Card */}
+            <div className="glass-morphism rounded-2xl p-5 md:p-6 touch-scale">
+              <div className={`flex items-center gap-4 mb-4 ${isRTL ? 'flex-row-reverse' : ''}`}>
+                <div className="w-12 h-12 md:w-14 md:h-14 rounded-xl bg-gradient-to-br from-tertiary to-accent flex items-center justify-center shadow-glow">
+                  <MapPin className="h-5 w-5 md:h-6 md:w-6 text-tertiary-foreground" />
                 </div>
                 <div>
-                  <div className="text-sm text-muted-foreground mb-2 font-medium">
+                  <div className="text-xs md:text-sm text-muted-foreground mb-1">
                     {isRTL ? 'الموقع' : 'Location'}
                   </div>
-                  <div className="text-xl font-bold group-hover:gradient-text transition-all duration-300">
+                  <div className="text-base md:text-lg font-bold">
                     {isRTL ? 'مصر 🇪🇬' : 'Egypt 🇪🇬'}
                   </div>
                 </div>
               </div>
-              <p className="text-muted-foreground text-lg leading-relaxed">
+              <p className="text-sm md:text-base text-muted-foreground leading-relaxed">
                 {isRTL 
-                  ? 'نعمل عن بُعد ونخدم العملاء في جميع أنحاء الوطن العربي والعالم. 🌍'
-                  : 'We work remotely and serve clients across the Arab world and globally. 🌍'}
+                  ? 'نعمل عن بُعد ونخدم العملاء في جميع أنحاء العالم. 🌍'
+                  : 'We work remotely and serve clients worldwide. 🌍'}
               </p>
             </div>
           </div>
@@ -219,6 +195,8 @@ const ContactSection: React.FC = () => {
       </div>
     </section>
   );
-};
+});
+
+ContactSection.displayName = 'ContactSection';
 
 export default ContactSection;
